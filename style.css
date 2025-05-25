@@ -44,8 +44,25 @@ canvas {
 }
 
 .burst-text {
-  /* ... (resto igual) */
-  animation: burstMove 1.5s ease-out forwards;
+  position: absolute;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  color: #ee0384;
+  font-size: 20px;
+  user-select: none;
+  pointer-events: none;
+  opacity: 1;
+  animation: burstMove 2s ease-out forwards;
+  white-space: nowrap;
+  text-shadow: 
+    0 0 5px #ff4da6,
+    0 0 10px #ff1a75,
+    0 0 20px #ee0384,
+    0 0 30px #ee0384,
+    0 0 40px #cf0068,
+    0 0 55px #cf0068,
+    0 0 75px #cf0068;
+  z-index: 1000;
 }
 
 @keyframes burstMove {

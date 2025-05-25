@@ -16,13 +16,12 @@ const drops = new Array(columns).fill(1);
 ctx.font = fontSize + "px monospace";
 
 function draw() {
-  // Fondo semi-transparente para efecto trail
-  ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; 
+  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = "#ff3399";
   ctx.shadowColor = "#ff3399";
-  ctx.shadowBlur = 5; // Reducido para menos lag
+  ctx.shadowBlur = 10;
   ctx.font = fontSize + "px monospace";
 
   for (let i = 0; i < drops.length; i++) {
@@ -30,7 +29,7 @@ function draw() {
     const y = drops[i] * fontSize;
     ctx.fillText(text, x, y);
 
-    if (y > canvas.height && Math.random() > 0.98) {
+    if (y > canvas.height && Math.random() > 0.975) {
       drops[i] = 0;
     }
 
@@ -38,13 +37,12 @@ function draw() {
   }
 
   ctx.shadowBlur = 0;
-
-  requestAnimationFrame(draw);
 }
-draw();
+
+setInterval(draw, 50);
 
 function createBurstText(x, y) {
-  const fragments = 6; // Reducido a la mitad
+  const fragments = 12;
   for (let i = 0; i < fragments; i++) {
     const burst = document.createElement('div');
     burst.className = 'burst-text';
@@ -53,14 +51,10 @@ function createBurstText(x, y) {
     burst.style.left = x + 'px';
     burst.style.top = y + 'px';
 
-    // Movimiento reducido a rango +-100 px
-    const moveX = (Math.random() * 200 - 100).toFixed(2) + 'px';
-    const moveY = (Math.random() * 200 - 100).toFixed(2) + 'px';
+    const moveX = (Math.random() * 300 - 150).toFixed(2) + 'px';
+    const moveY = (Math.random() * 300 - 150).toFixed(2) + 'px';
     burst.style.setProperty('--move-x', moveX);
     burst.style.setProperty('--move-y', moveY);
-
-    // Duración de animación reducida a 1.5s
-    burst.style.animationDuration = '1.5s';
 
     document.body.appendChild(burst);
 
