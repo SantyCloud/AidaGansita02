@@ -10,18 +10,19 @@ window.addEventListener('resize', resizeCanvas);
 
 const text = "TE AMO";
 const fontSize = 18;
-const columns = Math.floor(canvas.width / (fontSize * 4));
-const drops = new Array(columns).fill(1);
+let columns = Math.floor(canvas.width / (fontSize * 4));
+let drops = new Array(columns).fill(1);
 
 ctx.font = fontSize + "px monospace";
 
 function draw() {
-  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+  // Fondo semitransparente para efecto "desvanecido"
+  ctx.fillStyle = "rgba(0, 0, 0, 0.08)"; // Aumenté un poco la opacidad para mejor performance y menos efecto de ghosting
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = "#ff3399";
   ctx.shadowColor = "#ff3399";
-  ctx.shadowBlur = 10;
+  ctx.shadowBlur = 8; // reduje el blur para menos carga
   ctx.font = fontSize + "px monospace";
 
   for (let i = 0; i < drops.length; i++) {
@@ -39,10 +40,15 @@ function draw() {
   ctx.shadowBlur = 0;
 }
 
-setInterval(draw, 50);
+// Usar requestAnimationFrame para mejor rendimiento
+function animate() {
+  draw();
+  requestAnimationFrame(animate);
+}
+animate();
 
 function createBurstText(x, y) {
-  const fragments = 12;
+  const fragments = 8; // Reducido de 12 para menor carga
   for (let i = 0; i < fragments; i++) {
     const burst = document.createElement('div');
     burst.className = 'burst-text';
@@ -51,8 +57,8 @@ function createBurstText(x, y) {
     burst.style.left = x + 'px';
     burst.style.top = y + 'px';
 
-    const moveX = (Math.random() * 300 - 150).toFixed(2) + 'px';
-    const moveY = (Math.random() * 300 - 150).toFixed(2) + 'px';
+    const moveX = (Math.random() * 200 - 100).toFixed(2) + 'px'; // Rango reducido para menos movimiento exagerado
+    const moveY = (Math.random() * 200 - 100).toFixed(2) + 'px';
     burst.style.setProperty('--move-x', moveX);
     burst.style.setProperty('--move-y', moveY);
 
@@ -64,11 +70,19 @@ function createBurstText(x, y) {
   }
 }
 
-window.addEventListener('click', e => {
-  createBurstText(e.clientX, e.clientY);
-});
+// Limitar la frecuencia para evitar bursts muy seguidos y saturar DOM
+let lastBurstTime = 0;
+function tryCreateBurst(e) {
+  const now = Date.now();
+  if (now - lastBurstTime > 100) { // 100 ms entre bursts
+    createBurstText(e.clientX, e.clientY);
+    lastBurstTime = now;
+  }
+}
+
+window.addEventListener('click', tryCreateBurst);
 
 window.addEventListener('touchstart', e => {
   const touch = e.touches[0];
-  if (touch) createBurstText(touch.clientX, touch.clientY);
+  if (touch) tryCreateBurst(touch);
 });
